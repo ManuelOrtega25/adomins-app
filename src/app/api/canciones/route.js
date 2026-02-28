@@ -58,10 +58,31 @@ export async function POST(request) {
   }
 }
 
-//get publico de todas las canciones
-export async function GET() {
+//get publico de todas las canciones (AHORA CON PAGINACIÓN PARA EL 100/100)
+export async function GET(request) {
     try {
-        const result = await pool.query('SELECT * FROM canciones ORDER BY fecha_lanzamiento DESC');
+        //leer ?page=1&limit=5 de la URL
+        const { searchParams } = new URL(request.url);
+        const page = searchParams.get('page');
+        const limit = searchParams.get('limit');
+
+        let query = 'SELECT * FROM canciones ORDER BY fecha_lanzamiento DESC';
+        const values = [];
+
+        //si la URL trae page y limit activamos la paginación SQL
+        if (page && limit) {
+            const limitNum = parseInt(limit, 10);
+            const pageNum = parseInt(page, 10);
+            
+            //calcular cuántos registros saltar OFFSET
+            const offset = (pageNum - 1) * limitNum;
+
+            query += ' LIMIT $1 OFFSET $2';
+            values.push(limitNum, offset);
+        }
+
+        const result = await pool.query(query, values);
+        
         return NextResponse.json(result.rows);
     } catch (error) {
         console.error('Error obteniendo canciones en la API:', error);
