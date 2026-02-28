@@ -135,7 +135,7 @@ export default async function ApiExternaPage() {
                   </div>
                   <div>
                     <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest mb-1 drop-shadow-md">Fecha de lanzamiento</p>
-                    <p className="text-white font-medium drop-shadow-sm">28 de Julio de 2023</p>
+                    <p className="text-white font-medium drop-shadow-sm">28 de Julio de 2022</p>
                   </div>
                   <div>
                     <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest mb-1 drop-shadow-md">Duración</p>
