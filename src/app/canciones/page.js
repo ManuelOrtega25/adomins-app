@@ -99,7 +99,7 @@ export default function CatalogoPublico() {
                         href="/" 
                         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neutral-900/50 border border-blue-800 text-neutral-400 font-bold text-sm hover:bg-neutral-800 hover:text-white hover:border-neutral-600 transition-all shadow-sm"
                     >
-                        <span></span> Volver a la página principal.
+                        <span></span> Volver a la página principal
                     </Link>
                     </div>
                 </aside>

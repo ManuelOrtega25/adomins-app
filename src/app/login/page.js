@@ -4,6 +4,7 @@ import Link from 'next/link';
 import AlreadyLoggedIn from '@/components/AlreadyLoggedIn'; 
 
 export default function LoginPage() {
+    // ... (todo tu estado y useEffect se queda igual) ...
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [checkingAuth, setCheckingAuth] = useState(true);
 
@@ -12,17 +13,16 @@ export default function LoginPage() {
     const [msg, setMsg] = useState('');
     const [loading, setLoading] = useState(false);
 
-    //este useEffect se ejecuta apenas entras a la página
     useEffect(() => {
-        //revisamos si hay token en el navegador
         const token = localStorage.getItem('token');
         if (token) {
-            setIsLoggedIn(true); //si hay marcamos como logueado
+            setIsLoggedIn(true); 
         }
-        setCheckingAuth(false); //terminamos de revisar
+        setCheckingAuth(false); 
     }, []);
 
     const login = async (ev) => {
+        // ... (tu lógica de login se queda igual) ...
         ev.preventDefault();
         setLoading(true);
         setMsg(''); 
@@ -41,8 +41,6 @@ export default function LoginPage() {
             }
             localStorage.setItem('token', data.token);
             setMsg('Login exitoso');
-            
-            //forzar recarga
             window.location.href = '/'; 
 
         } catch (error) {
@@ -53,15 +51,12 @@ export default function LoginPage() {
         }
     }
 
-    // revisando token
     if (checkingAuth) return <div className="min-h-screen bg-neutral-950"></div>;
 
-    //si ya está logueado Ado te avisa, no te regaña
     if (isLoggedIn) {
         return <AlreadyLoggedIn />;
     }
 
-    //si NO está logueado solo se muestra el formulario normal
     return (
         <main className="min-h-screen relative flex items-center justify-center lg:justify-end p-6 lg:pr-32 overflow-hidden">
             
@@ -112,10 +107,21 @@ export default function LoginPage() {
                             required 
                         />
                     </div>
+
+                    {/* ✅ NUEVO: Link de recuperación aquí, alineado a la derecha */}
+                    <div className="text-center justify-end">
+                        <Link 
+                            href="/forgot-password" 
+                            className="text-sm text-blue-400 hover:text-blue-300 font-bold transition-colors drop-shadow-sm"
+                        >
+                            ¿Olvidaste tu contraseña?
+                        </Link>
+                    </div>
+
                     <button 
                         type="submit" 
                         disabled={loading} 
-                        className={`w-full text-white font-bold py-4 rounded-xl transition-transform hover:-translate-y-1 shadow-lg mt-4 border border-white/10 ${loading ? 'bg-neutral-800/80 backdrop-blur-md cursor-not-allowed text-neutral-400' : 'bg-blue-600/80 hover:bg-blue-500/90 backdrop-blur-md'}`}
+                        className={`w-full text-white font-bold py-4 rounded-xl transition-transform hover:-translate-y-1 shadow-lg mt-2 border border-white/10 ${loading ? 'bg-neutral-800/80 backdrop-blur-md cursor-not-allowed text-neutral-400' : 'bg-blue-600/80 hover:bg-blue-500/90 backdrop-blur-md'}`}
                     >
                         {loading ? 'Verificando...' : 'Entrar'}
                     </button>

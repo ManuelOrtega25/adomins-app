@@ -1,4 +1,4 @@
-'use client'; // Esto es vital para que funcione en el navegador
+'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -8,21 +8,31 @@ export default function EmailVerifiedToast() {
     const router = useRouter();
 
     useEffect(() => {
-        // Detectamos si la URL tiene el hash de Supabase
         if (typeof window !== 'undefined' && window.location.hash.includes('access_token')) {
-            // Limpiamos la URL fea para que se vea bonita
-            // Usamos replaceState para no recargar la página
-            window.history.replaceState(null, '', '/');
+            const hash = window.location.hash;
             
-            // Mostramos el mensajito de éxito
-            setShowToast(true);
+            // ✅ CASO 1: Es una recuperación de contraseña
+            if (hash.includes('type=recovery')) {
+                // No limpiamos la URL aquí, dejamos que la página de update-password lo haga
+                // Redirigimos inmediatamente conservando el hash para que Supabase lo lea allá
+                router.push('/update-password' + hash);
+                return;
+            }
 
-            // Ocultamos el mensaje después de 5 segundos
-            setTimeout(() => {
-                setShowToast(false);
-            }, 5000);
+            // ✅ CASO 2: Es un registro normal (confirmación de correo)
+            if (hash.includes('type=signup') || !hash.includes('type=')) {
+                // Limpiamos la URL para que se vea bonita
+                window.history.replaceState(null, '', '/');
+                
+                // Mostramos el mensaje de éxito
+                setShowToast(true);
+
+                setTimeout(() => {
+                    setShowToast(false);
+                }, 5000);
+            }
         }
-    }, []);
+    }, [router]);
 
     if (!showToast) return null;
 
