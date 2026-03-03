@@ -25,7 +25,7 @@ export default function AboutPage() {
           
           <p className="text-neutral-200 leading-relaxed font-medium mb-10 text-center max-w-2xl drop-shadow-md">
             Adomins es una página donde recopilamos todas las canciones de Ado y sus álbumes. ¡Próximamente habrá más secciones para la comunidad! 
-            Esta versión release 1.0 está construida full stack con Next.js, Supabase y Tailwind CSS.
+            Esta versión release 1.3 está construida full stack con Next.js, Supabase y Tailwind CSS.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-5 items-center w-full justify-center">
