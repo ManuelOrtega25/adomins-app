@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
+import { createClient } from '@supabase/supabase-js';
 import repo from '../../../repositories/users.repository.js';
+
+// Inicializamos el Cadenero VIP de Supabase
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 export async function POST(request) {
   try {
@@ -11,28 +17,37 @@ export async function POST(request) {
       return NextResponse.json({ error: 'El email y el password son obligatorios' }, { status: 400 });
     }
     
-    //nadie debe de saber, nadie
-    const existingUser = await repo.findByEmail(email);
-    if (existingUser) {
-      return NextResponse.json({ error: 'Credenciales no válidas' }, { status: 400 });
+    // 1. LE PASAMOS LA CHAMBA A SUPABASE AUTH
+    // Esto crea al usuario en la bóveda de Supabase y dispara el correo de verificación
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    });
+    // 👇 AGREGA ESTE CONSOLE.LOG TEMPORAL 👇
+    console.log("Respuesta de Supabase Auth:", { authData, authError });
+
+    if (authError) {
+      // Supabase nos avisa si el correo ya existe o si la contra es muy débil
+      return NextResponse.json({ error: authError.message }, { status: 400 });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    
-    //todo usuario nuevo es un wey más
-    const user = await repo.create({ 
-      email: email, 
-      passwordHash: hashedPassword, 
-      role: role || 'user' //si le veo futuro posiblemente agregue el rol de mod
-    });
+    // 2. REGISTRAMOS AL "WEY MÁS" EN TU TABLA PERSONALIZADA
+    // Para no romper tus roles de Admin/User en la base de datos
+    try {
+      await repo.create({ 
+        email: email, 
+        // Ya no hasheamos nada, Supabase lo maneja. Ponemos un placeholder.
+        passwordHash: 'managed-by-supabase', 
+        role: role || 'user' // si le veo futuro posiblemente agregue el rol de mod 👀
+      });
+    } catch (dbError) {
+      console.error("Falló la inserción en tu tabla repo, pero Supabase sí lo registró:", dbError);
+    }
 
-    delete user.password_hash;
-
+    // 3. RESPONDEMOS CON ÉXITO
     return NextResponse.json({ 
       ok: true, 
-      message: 'Usuario creado con éxito',
-      user: user 
+      message: '¡Revisa tu bandeja de entrada! Te hemos enviado un correo de confirmación.',
     }, { status: 201 });
 
   } catch (error) {

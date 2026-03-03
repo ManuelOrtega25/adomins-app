@@ -38,7 +38,10 @@ export default function SignUpPage() {
       if (!res.ok) {
         throw new Error(data.error || 'Ocurrió un error al registrarse');
       }
-      setMensaje('¡Cuenta creada con éxito! Ya puedes iniciar sesión.');
+      
+      // 🚨 AQUÍ ESTÁ EL CAMBIO CLAVE: Ahora leemos el mensaje dinámico del backend
+      setMensaje(data.message || '¡Cuenta creada! Revisa tu correo.');
+      
       setEmail('');
       setPassword('');
     } catch (err) {
