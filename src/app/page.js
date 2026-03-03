@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { pool } from '@/lib/db';
 import albumesRepo from '@/repositories/albumes.repository';
+import EmailVerifiedToast from '@/components/EmailVerifiedToast';
 
 // forzar carga dinámica para datos frescos
 export const dynamic = 'force-dynamic';
@@ -41,6 +42,7 @@ export default async function HomePage() {
 
     return (
         <main className="min-h-screen relative flex flex-col items-center">
+            <EmailVerifiedToast />
 
             {/* wallpaper */}
             <div className="fixed inset-0 z-0">
